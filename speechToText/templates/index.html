@@ -1,0 +1,464 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Baloo|Montserrat" rel="stylesheet">
+  <title>Hold 'Q' to begin speech recognition</title>
+  <style>
+
+    #results {
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    min-height: 300px;
+    }
+
+    body {
+        font: 400 15px Lato, sans-serif;
+        line-height: 1.8;
+        color: #818181;
+    }
+
+    .wrap { /*감싸는 레이어에 포지션 속성을 잡아주는 게 필수!(relative, absolute, fixed 중 택1*/
+        width:60px; height:60px;
+        border-radius:60px;
+        text-align:center; line-height:100px; margin:0 auto;  color:#000; font-size:12px;
+    }
+    .over {
+        position:relative; top:0px; left:0px;/*위에 올라가는 레이어의 포지션은 top, bottom 둘 중 하나, left, right 둘 중 하나의 속성을 선택하여 잡아준다.*/
+        width:60px; height:60px;
+        border-radius:60px;
+        text-align:center; line-height:60px;
+    }
+
+
+
+  h2 {
+      font-size: 24px;
+      text-transform: uppercase;
+      color: #303030;
+      font-weight: 600;
+      margin-bottom: 30px;
+  }
+  h4 {
+      font-size: 19px;
+      line-height: 1.375em;
+      color: #303030;
+      font-weight: 400;
+      margin-bottom: 30px;
+  }
+  .jumbotron {
+      background-color: #f4511e;
+      color: #fff;
+      padding: 100px 25px;
+      font-family: Montserrat, sans-serif;
+  }
+  .container-fluid {
+      padding: 60px 50px;
+  }
+  .bg-grey {
+      background-color: #f6f6f6;
+  }
+  .logo-small {
+      color: #f4511e;
+      font-size: 50px;
+  }
+  .logo {
+      color: #f4511e;
+      font-size: 200px;
+  }
+  .thumbnail {
+      padding: 0 0 15px 0;
+      border: none;
+      border-radius: 0;
+  }
+  .thumbnail img {
+      width: 100%;
+      height: 100%;
+      margin-bottom: 10px;
+  }
+  .carousel-control.right, .carousel-control.left {
+      background-image: none;
+      color: #f4511e;
+  }
+  .carousel-indicators li {
+      border-color: #f4511e;
+  }
+  .carousel-indicators li.active {
+      background-color: #f4511e;
+  }
+  .item h4 {
+      font-size: 19px;
+      line-height: 1.375em;
+      font-weight: 400;
+      font-style: italic;
+      margin: 70px 0;
+  }
+  .item span {
+      font-style: normal;
+  }
+  .panel {
+      border: 1px solid #f4511e;
+      border-radius:0 !important;
+      transition: box-shadow 0.5s;
+  }
+  .panel:hover {
+      box-shadow: 5px 0px 40px rgba(0,0,0, .2);
+  }
+  .panel-footer .btn:hover {
+      border: 1px solid #f4511e;
+      background-color: #fff !important;
+      color: #f4511e;
+  }
+  .panel-heading {
+      color: #fff !important;
+      background-color: #f4511e !important;
+      padding: 25px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+  }
+  .panel-footer {
+      background-color: white !important;
+  }
+  .panel-footer h3 {
+      font-size: 32px;
+  }
+  .panel-footer h4 {
+      color: #aaa;
+      font-size: 14px;
+  }
+  .panel-footer .btn {
+      margin: 15px 0;
+      background-color: #f4511e;
+      color: #fff;
+  }
+  .navbar {
+      margin-bottom: 0;
+      background-color: #f4511e;
+      z-index: 9999;
+      border: 0;
+      font-size: 12px !important;
+      line-height: 1.42857143 !important;
+      letter-spacing: 4px;
+      border-radius: 0;
+      font-family: Montserrat, sans-serif;
+  }
+  .navbar li a, .navbar .navbar-brand {
+      color: #fff !important;
+  }
+  .navbar-nav li a:hover, .navbar-nav li.active a {
+      color: #f4511e !important;
+      background-color: #fff !important;
+  }
+  .navbar-default .navbar-toggle {
+      border-color: transparent;
+      color: #fff !important;
+  }
+  footer .glyphicon {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #f4511e;
+  }
+  .slideanim {visibility:hidden;}
+  .slide {
+      animation-name: slide;
+      -webkit-animation-name: slide;
+      animation-duration: 1s;
+      -webkit-animation-duration: 1s;
+      visibility: visible;
+  }
+  @keyframes slide {
+    0% {
+      opacity: 0;
+      transform: translateY(70%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
+  @-webkit-keyframes slide {
+    0% {
+      opacity: 0;
+      -webkit-transform: translateY(70%);
+    }
+    100% {
+      opacity: 1;
+      -webkit-transform: translateY(0%);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .col-sm-4 {
+      text-align: center;
+      margin: 25px 0;
+    }
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 35px;
+    }
+  }
+  @media screen and (max-width: 480px) {
+    .logo {
+        font-size: 150px;
+    }
+  }
+
+    main {
+      background-color: rgba(255, 255, 255, 0.4);
+      padding: 20px;
+      display: inline-block;
+    }
+
+  </style>
+</head>
+  <body>
+    <!--<main>
+    <span id="speech"></span>
+    <span id="interim"></span>
+
+    </main>-->
+  </body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">HOME</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/about">ABOUT</a></li>
+        <li><a href="/user/login">LOGIN</a></li>
+        <li><a href="/user/logout">LOGOUT</a></li>
+        <li><a href="/speechToText">SPEECH TO TEXT</a></li>
+        <li><a href="/summarize/sum">SUMMARIZE</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="jumbotron text-center">
+  <h1>MENTOR</h1>
+  <p>Memorizing English-lecture Note To Overview summary with Recommendation</p>
+</div>
+
+<div id="about" class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8">
+      <h2>
+          <div id="results">
+          <span class="final" id="final_span"></span>
+              <main>
+                <span id="speech"></span>
+                <span id="interim"></span>
+                </main>
+              <nav id="speechSpace">"Click" <small style="color:#777"> the icon to record.</small></nav>
+
+         </div>
+
+      </h2>
+                     <div id="ballOuter"  class="wrap">
+
+                  <div id="ball" class="over" >
+                      <i class="ion-mic-c"></i>
+                  </div>
+              </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+    function upgrade() {
+      alert('Please upgrade to Google Chrome for best possible experience.');
+    }
+
+    window.onload = function() {
+      if (!(window.webkitSpeechRecognition) && !(window.speechRecognition)) {
+        upgrade();
+      } else {
+
+        var speech = new webkitSpeechRecognition() || speechRecognition();
+        speech.lang = 'en-US';
+        speech.continuous = true;
+        speech.interimResults = true;
+
+        var recognizing,
+            final_transcript,
+            interim_transcript,
+            transcription = document.getElementById('speech'),
+            interim_span = document.getElementById('interim'),
+            ball = document.getElementById('ball'),
+            outerBall = document.getElementById('ballOuter'),
+            nav = document.getElementById('speechSpace'),
+            ifr = document.getElementsByTagName('iframe');
+
+        interim_span.style.opacity = '0.5';
+
+        function reset() {
+          ball.style.backgroundColor = 'white';
+          ball.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+          ball.style.color = '#444';
+          ball.style.borderRadius='100px'
+          outerBall.style.webkitTransform = 'scale(1)';
+          outerBall.style.transform = 'scale(1)';
+          outerBall.style.opacity = '0.2';
+          transcription.innerHTML = '';
+          interim_span.innerHTML = '';
+          recognizing = false;
+          speech.stop();
+        }
+
+        function realStart() {
+          if (!recognizing) {
+            speech.start();
+            // darkMode('on');
+            nav.style.opacity = '0';
+            //ball.style.width = '100px';
+            //ball.style.height = '100px';
+            //ball.style.borderRadius='100px'
+            ball.style.backgroundColor = 'crimson';
+            ball.style.color = 'rgba(245, 245, 245, 0.9)';
+            //outerBall.style.width = '100px';
+            //outerBall.style.height = '100px';
+            outerBall.style.opacity='0.2'
+            outerBall.style.borderRadius='130px'
+            outerBall.style.color = 'rgba(100, 100, 100, 0.9)';
+            outerBall.style.transform = 'scale(1.3) translateZ(0)';
+            // ball.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
+            if (ifr.length) {
+              // ifr[0].style.width = '50vw';
+              ifr[0].style.height = '70vh';
+            }
+          }
+        }
+
+        function realStop() {
+          if (recognizing) {
+            nav.style.opacity = '1';
+            speech.stop();
+            if (ifr.length) {
+              // ifr[0].style.width = '89.3vw';
+              ifr[0].style.height = '80vh';
+            }
+            // darkMode('off');
+            reset();
+          }
+        }
+
+        document.onkeydown = function(e) {
+          if (e.key === "q") {
+            if (!recognizing) {
+              realStart();
+            }
+          }
+        };
+
+        document.onkeyup = function(e) {
+          if (e.key === "q") {
+            realStop();
+          }
+        };
+
+        ball.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          realStart();
+        });
+
+        ball.addEventListener('mouseup', function(e) {
+          e.preventDefault();
+          realStop();
+        });
+
+        speech.onstart = function() {
+            // When recognition begins
+            recognizing = true;
+            console.log("Speaking!");
+        };
+
+        speech.onresult = function(event) {
+            // When recognition produces result
+            interim_transcript = '';
+            final_transcript = '';
+
+            // main for loop for final and interim results
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                  final_transcript += event.results[i][0].transcript;
+                  //result.textContent=interim_transcript;
+                }
+                else {
+                  interim_transcript += event.results[i][0].transcript;
+
+                  outerBall.style.opacity = '0.2';
+                  outerBall.style.webkitTransform = 'scale(' + (Math.min(event.results[i][0].transcript.length/50 + 1.3, 2.3)) + ') translateZ(0)';
+                  setTimeout(function() {
+                    outerBall.style.webkitTransform = 'scale(1.3) translateZ(0)';
+                  }, 230)
+                }
+             }
+
+            transcription.innerHTML = final_transcript;
+            interim_span.innerHTML = interim_transcript;
+
+            var makeArray = final_transcript.split(' ');
+            var bColor = makeArray.splice(-3);
+            // change background color
+            if ((/^change /g.test(final_transcript)) && (/background color/g.test(final_transcript))) {
+              if (bColor[0] === 'to') {
+                document.body.style.backgroundColor = bColor[1] + bColor[2];
+              } else if (bColor[1] === 'to') {
+                document.body.style.backgroundColor = bColor[2];
+              } else {
+                document.body.style.backgroundColor = bColor[0] + bColor[1] + bColor[2];
+              }
+            }
+        };
+
+        speech.onerror = function(event) {
+            // When recognition fails or error occurs
+            console.error(event.error);
+        };
+
+        speech.onend = function() {
+            // When recognition ends
+            console.log("Hold 'Q' to begin speech.");
+            /*var fso=new ActiveXObject('Scripting.FileSystemObject');
+            var fileObj=fso.CreateTextFile("\\yejin\\test.txt",true);
+            fileObj.WriteLine(final_transcript);
+            fileObj.Close();*/
+
+            reset();
+
+        };
+
+        function startButton(event) {
+          if (recognizing) {
+            recognition.stop();
+            return;
+          }
+
+          reset();
+        }
+      }
+    };
+  </script>
+
+
+</html>
